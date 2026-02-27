@@ -2,6 +2,10 @@
 
 Semantic search demo comparing ScyllaDB and OpenSearch for HackerNews comments.
 
+## Screenshot
+
+![Demo](demo.png)
+
 ## Prerequisites
 
 - Python 3.14+
@@ -19,6 +23,18 @@ Semantic search demo comparing ScyllaDB and OpenSearch for HackerNews comments.
    cp ingest/example.env .env
    # edit .env with your ScyllaDB and OpenSearch connection details
    ```
+
+## Run OpenSearch locally
+
+```bash
+docker run -d \
+  --name opensearch \
+  -p 9200:9200 \
+  -p 9600:9600 \
+  -e "discovery.type=single-node" \
+  -e "OPENSEARCH_INITIAL_ADMIN_PASSWORD=Pa\$\$word1" \
+  opensearchproject/opensearch:3
+```
 
 ## Start the server
 
