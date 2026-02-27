@@ -4,7 +4,7 @@ Semantic search demo comparing ScyllaDB and OpenSearch for HackerNews comments.
 
 ## Screenshot
 
-![Demo](demo.png)
+![Demo](/docs/images/demo.png)
 
 ## Prerequisites
 
