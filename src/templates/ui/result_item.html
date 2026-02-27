@@ -1,0 +1,56 @@
+
+<div 
+  class="result-item p-4 rounded-lg mb-4 shadow ring-1"
+  :class="darkMode 
+    ? 'bg-gray-800 ring-gray-700 text-white' 
+    : 'bg-gray-50 ring-gray-200 text-gray-900'"
+  style="word-wrap: break-word; overflow-wrap: anywhere; max-width: 100%; overflow: hidden;"
+>
+  <div class="flex items-start justify-between mb-2 gap-2">
+    <div class="font-semibold text-sm sm:text-base flex-1"
+      :class="darkMode ? 'text-white' : 'text-gray-900'"
+      style="word-wrap: break-word; overflow-wrap: anywhere; min-width: 0;"
+    >
+      Comment: {{ result.text }}
+    </div>
+    <span class="text-xs whitespace-nowrap flex-shrink-0"
+      :class="darkMode ? 'text-gray-400' : 'text-gray-500'"
+    >
+      {% if result.time %}
+        {{ result.time }}
+      {% else %}
+        No time
+      {% endif %}
+    </span>
+  </div>
+  <div class="mb-1 text-sm"
+    :class="darkMode ? 'text-gray-300' : 'text-gray-700'"
+  >
+    User: <span 
+      class="font-medium"
+      :class="darkMode ? 'text-indigo-300' : 'text-indigo-700'"
+    >{{ result.by }}</span>
+  </div>
+  <div class="flex items-center text-xs space-x-4 mt-1"
+    :class="darkMode ? 'text-gray-400' : 'text-gray-600'"
+  >
+    {% if result.parent %}
+      <span>Original post:
+        <a 
+          href="https://news.ycombinator.com/item?id={{ result.parent }}"
+          class="font-medium hover:underline"
+          :class="darkMode ? 'text-blue-400' : 'text-blue-600'"
+          target="_blank"
+        >#{{ result.parent }}</a>
+      </span>
+    {% endif %}
+    {% if result.url %}
+      <a 
+        href="{{ result.url }}"
+        class="hover:underline"
+        :class="darkMode ? 'text-blue-400' : 'text-blue-600'"
+        target="_blank"
+      >Source</a>
+    {% endif %}
+  </div>
+</div>

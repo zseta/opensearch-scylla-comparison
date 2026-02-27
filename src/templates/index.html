@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Database Comparison</title>
+    <script src="static/vendor/htmx.min.js"></script>
+    <script src="static/vendor/tailwindcss.min.js"></script>
+    <script defer src="static/vendor/alpinejs.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=DM+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="static/style.css" />
+    <style>
+      .logo-white {
+        filter: brightness(0) invert(1);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      x-data="comparisonApp()"
+      x-bind:class="darkMode ? 'dark' : ''"
+      style="min-height: 100vh"
+    >
+      <!-- Search Area -->
+      <script>
+        htmx.logAll();
+      </script>
+      <div class="search-container">
+        <div style="max-width: 600px; margin: 0 auto" 
+        :inert="databaseA.loading || databaseB.loading">
+          <input
+            type="text"
+            name="q"
+            class="search-input"
+            placeholder="Search products..."
+            x-model="query"
+            @keyup.enter="if (!queryIsEmpty()) $dispatch('searchEnter');"
+          />
+          <button class="search-button" x-bind:disabled="queryIsEmpty()">
+            Search
+          </button>
+        </div>
+      </div>
+
+      <!-- Panel Headers -->
+      <div class="headers-container">
+        <!-- Database A Header -->
+        <div class="panel-header">
+          <div class="panel-title">
+            <img
+              x-bind:src=" darkMode ? 'static/images/scylla-logo-white.svg' : 'static/images/scylla-logo.svg'"
+              alt="Database A"
+              style="height: 32px"
+            />
+          </div>
+          <div
+            class="response-time"
+            :class="{
+                        'fast': databaseA.latency < 100,
+                        'medium': databaseA.latency >= 100 && databaseA.latency < 200,
+                        'slow': databaseA.latency >= 200
+                    }"
+          >
+            <div x-show="!databaseA.loading">
+              <span id="latency-A"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Database B Header -->
+        <div class="panel-header">
+          <div class="panel-title">AWS opensearch</div>
+          <div
+            class="response-time"
+            :class="{
+                        'fast': databaseB.latency < 100,
+                        'medium': databaseB.latency >= 100 && databaseB.latency < 200,
+                        'slow': databaseB.latency >= 200
+                    }"
+          >
+            <div x-show="!databaseB.loading">
+              <span id="latency-B"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Container -->
+      <div class="comparison-grid">
+        <!-- Database A Results -->
+        <div>
+          <div id="loading-A" class="loading-state" x-show="databaseA.loading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Searching...</div>
+          </div>
+          <div
+            id="results-container-A"
+            class="results-container"
+            x-show="!databaseA.loading"
+            hx-get="{{ url_for('search_database', database='scylladb') }}"
+            hx-trigger="click from:.search-button, searchEnter from:.search-input"
+            hx-include=".search-input"
+            hx-swap="innerHTML"
+            @htmx:before-request="databaseA.loading = true"
+            @htmx:after-request="databaseA.loading = false"
+          ></div>
+        </div>
+
+        <!-- Database B Results -->
+        <div>
+          <div id="loading-B" class="loading-state" x-show="databaseB.loading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Searching...</div>
+          </div>
+          <div
+            id="results-container-B"
+            class="results-container"
+            x-show="!databaseB.loading"
+            hx-get="{{ url_for('search_database', database='opensearch') }}"
+            hx-trigger="click from:.search-button, searchEnter from:.search-input"
+            hx-include=".search-input"
+            hx-swap="innerHTML"
+            @htmx:before-request="databaseB.loading = true"
+            @htmx:after-request="databaseB.loading = false"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Dark Mode Toggle -->
+      <div style="position: fixed; bottom: 20px; right: 20px; z-index: 20">
+        <button
+          @click="darkMode = !darkMode"
+          class="dark-mode-toggle"
+          :title="darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+        >
+          <span x-show="!darkMode">🌙</span>
+          <span x-show="darkMode">☀️</span>
+        </button>
+      </div>
+    </div>
+
+    <script src="static/app.js?v={{ range(1, 10000) | random }}"></script>
+  </body>
+</html>

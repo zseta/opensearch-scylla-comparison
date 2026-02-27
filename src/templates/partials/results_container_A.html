@@ -1,0 +1,9 @@
+<div style="max-width: 100%; overflow-x: hidden;">
+	{% for result in results %}
+		{% include "ui/result_item.html" %}
+	{% endfor %}
+</div>
+
+<span x-init="databaseA.latency = {{ latency }}" id="latency-A" hx-swap-oob="outerHTML">
+	<span x-text="'Latency: ' + databaseA.latency + 'ms'"></span>
+</span>
